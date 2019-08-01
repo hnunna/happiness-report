@@ -29,7 +29,7 @@
 </style>
 <div class="container-fluid">
     <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <h1>World Happiness 2019</h1>
                     <p>The World Happiness Report is a landmark survey of the state of global happiness that ranks 156 countries by how happy their citizens perceive themselves to be. This year’s World Happiness Report focuses on happiness and the community: how happiness has evolved over the past dozen years, with a focus on the technologies, social norms, conflicts and government policies that have driven those changes.</p>
                     <p>The variables are GDP per capita, social support, healthy life expectancy, freedom, generosity, and absence of corruption. Note that we do not construct our happiness measure in each country using these six factors – the scores are instead based on individuals’ own assessments of their lives. Rather, we use the six variables to explain the variation of happiness across countries.</p>
@@ -70,7 +70,7 @@ var svg = d3.select("svg"),
 var path = d3.geoPath();
 var projection = d3.geoNaturalEarth()
     .scale(width / 2 / Math.PI)
-    .translate([width / 2, height / 2])
+    //.translate([width / 2, height / 2])
 var path = d3.geoPath()
     .projection(projection);
 
@@ -83,7 +83,7 @@ var colorScale = d3.scaleThreshold()
 // Legend
 var g = svg.append("g")
     .attr("class", "legendThreshold")
-    .attr("transform", "translate(20,20)");
+    //.attr("transform", "translate(20,20)");
 g.append("text")
     .attr("class", "caption")
     .attr("x", 0)
@@ -116,7 +116,7 @@ function mousemove(d){
     }
     else tooltipText = "Country: " + d.properties.name;
     tooltip.html(tooltipText)
-    tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+    .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
 }
 
 function mouseout(){
