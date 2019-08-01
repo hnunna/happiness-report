@@ -142,7 +142,7 @@ function segColor(c) {
 
 // Load external data and boot
 d3.queue()
-    .defer(d3.json, "https://enjalot.github.io/wwsd/data/world/world-110m.geojson")
+    .defer(d3.json, "world.geojson")
     .defer(d3.csv, "happiness-data-v1.csv", function(d) {
         inputData.push(d);
         data.set(d.code, +d.ladder);
