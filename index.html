@@ -29,12 +29,25 @@
 </style>
 <div class="container-fluid">
     <div class="row">
+                <div class="col-md-9">
+                    <h1>World Happiness 2019</h1>
+                    <p>The World Happiness Report is a landmark survey of the state of global happiness that ranks 156 countries by how happy their citizens perceive themselves to be. This year’s World Happiness Report focuses on happiness and the community: how happiness has evolved over the past dozen years, with a focus on the technologies, social norms, conflicts and government policies that have driven those changes.</p>
+                    <p>The variables are GDP per capita, social support, healthy life expectancy, freedom, generosity, and absence of corruption. Note that we do not construct our happiness measure in each country using these six factors – the scores are instead based on individuals’ own assessments of their lives. Rather, we use the six variables to explain the variation of happiness across countries.</p>
+                    <p> As per 2019 Happiness Report, Finland is the happiest country in the world, with Denmark, Norway, Iceland, and the Netherlands holding the next top positions.</p>
+                </div>
+    </div>
+    <div class="row">
         <div class="col-md-9" id="my_chart">
             <svg width="800" height="600"></svg>
         </div>
         <div class="col-md-3" id="my_pie">
         </div>
     </div>
+    <div class="row">
+            <div class="col-md-12">
+                <p>Referenced from : Helliwell, J., Layard, R., & Sachs, J. (2019). World Happiness Report 2019, New York: Sustainable Development Solutions Network.https://worldhappiness.report/ed/2019/. </p>
+            </div>
+</div>
     <!-- <div class="row">
         <button id="element" onclick="updateMap()">Click me to update</button>
         </div> -->
@@ -129,6 +142,7 @@ function chartClicked(d,i){
     var c = {};
     c.countryName = st[0].name;
     c.ladder = st[0].ladder;
+    c.happinessScore = st[0].happinessScore;
     dataForPieChart.push(c);
 
     pC.update(dataForPieChart);
@@ -143,7 +157,7 @@ function segColor(c) {
 // Load external data and boot
 d3.queue()
     .defer(d3.json, "world.geojson")
-    .defer(d3.csv, "happiness-data-v1.csv", function(d) {
+    .defer(d3.csv, "happiness-data-v3.csv", function(d) {
         inputData.push(d);
         data.set(d.code, +d.ladder);
         })
@@ -171,7 +185,7 @@ function ready(error, topo) {
                 .on("mouseout", mouseout)
                 .on("click", chartClicked);
 
-    var topCountryData = inputData.filter(function(s){ return s.ladder == '1.0';});
+    var topCountryData = inputData.filter(function(s){ return s.ladder == '1';});
 
     var initialPieChartData = [];
     var attributes = ['corruption','freedom','generosity','healthyLifeExpectancy',
@@ -189,6 +203,7 @@ function ready(error, topo) {
     var c = {};
     c.countryName = topCountryData[0].name;
     c.ladder = topCountryData[0].ladder;
+    c.happinessScore = topCountryData[0].happinessScore;
     initialPieChartData.push(c);
 
     pC = pieChart(initialPieChartData);
@@ -230,12 +245,20 @@ function pieChart(pD){
 		 .attr('y', 20)
          .text("Rank: "+ pD[pD.length - 1].ladder);
 
+         g.append("text")
+       .attr("id","scoreText")
+	   .attr("text-anchor", "middle")
+		 .attr('font-size', '1em')
+		 .attr('y', 40)
+         .text("Happiness Score: "+ pD[pD.length - 1].happinessScore);
+
         // create function to update pie-chart. This will be used by histogram.
         pC.update = function(nD){
             piesvg.selectAll("path").data(pie(nD)).transition().duration(500)
                 .attrTween("d", arcTween);
             piesvg.selectAll("#countryText").text("Country Name: "+ nD[nD.length - 1].countryName);
-           piesvg.selectAll("#ladderText").text("Rank: "+ nD[nD.length - 1].ladder)
+           piesvg.selectAll("#ladderText").text("Rank: "+ nD[nD.length - 1].ladder);
+           piesvg.selectAll("#scoreText").text("Happiness Score: "+ nD[nD.length - 1].happinessScore)
         }
 
         // Animating the pie-slice requiring a custom function which specifies
@@ -247,6 +270,30 @@ function pieChart(pD){
         }
         return pC;
     }
+
+function mapLegendsForPieChart(type){
+    var legendsForPieChart = ['Corruption','Freedom','Generosity','Healthy Life Expectancy',
+    'GD per capita','Social Support'];
+    if(type == 'corruption'){
+        return 'Corruption';
+    }
+    else if(type == 'freedom'){
+        return 'Freedom';
+    }
+    else if(type == 'logOfGDperCapita'){
+        return 'GD per capita';
+    }
+    else if(type == 'generosity'){
+        return 'Generosity';
+    }
+    else if(type == 'socialSupport'){
+        return 'Social Support';
+    }
+    else if(type == 'healthyLifeExpectancy'){
+        return 'Healthy Life Expectancy';
+    }
+    else return null;
+}
 
 function legend(lD){
         var leg = {};
@@ -263,7 +310,7 @@ function legend(lD){
 			.attr("fill",function(d){ return segColor(d.type); });
 
         // create the second column for each segment.
-        tr.append("td").text(function(d){ return d.type;});
+        tr.append("td").text(function(d){ return mapLegendsForPieChart(d.type);});
 
         // create the third column for each segment.
         tr.append("td").attr("class",'legendFreq')
