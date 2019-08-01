@@ -45,6 +45,10 @@
 #myBtn:hover {
   background-color: #555;
 }
+.legendFreq {
+    text-align:right;
+    width:50px;
+}
 </style>
 <button onclick="topFunction()" id="myBtn" title="Go to top">Back to Top</button>
 <!-- Navbar -->
@@ -67,12 +71,12 @@
         </div>
       </nav>
 <div id="info" class="container-fluid bg-1 text-center">
-                    <h1 class="margin">World Happiness 2019</h1>
+        <h1 class="margin">World Happiness 2019</h1>
                     <p>The World Happiness Report is a landmark survey of the state of global happiness that ranks 156 countries by how happy their citizens perceive themselves to be. This year’s World Happiness Report focuses on happiness and the community: how happiness has evolved over the past dozen years, with a focus on the technologies, social norms, conflicts and government policies that have driven those changes.</p>
                     <p>The variables are GDP per capita, social support, healthy life expectancy, freedom, generosity, and absence of corruption. Note that we do not construct our happiness measure in each country using these six factors – the scores are instead based on individuals’ own assessments of their lives. Rather, we use the six variables to explain the variation of happiness across countries.</p>
                     <p> As per 2019 Happiness Report, Finland is the happiest country in the world, with Denmark, Norway, Iceland, and the Netherlands holding the next top positions.</p>
-            </div>
-    <div id="chart" class="container-fluid bg-2 text-center">
+ </div>
+    <div id="chart" class="container-fluid bg-2">
         <div class="col-md-9" id="my_chart">
             <svg width="800" height="600"></svg>
         </div>
@@ -123,7 +127,7 @@ var path = d3.geoPath()
 // Data and color scale
 var data = d3.map();
 var colorScale = d3.scaleThreshold()
-.domain([1, 10, 30, 50, 70])
+.domain([1, 10, 50, 100, 200])
 .range(['lightgrey', 'green', 'lightgreen', 'orange', 'red']);
 
 // Legend
@@ -196,8 +200,8 @@ function chartClicked(d,i){
 }
 
 function segColor(c) {
-     return {corruption:"#807dba", freedom:"#e08214",generosity:"#41ab5d",healthyLifeExpectancy:"#eeff00",
-     logOfGDperCapita:"#ff0022",negativeAffect:"#2200ff",positiveAffect:"#8626d9",socialSupport:"#c1e9aa"}[c];
+     return {corruption:"#377eb8", freedom:"#ff6e54",generosity:"#76D7C4",
+     healthyLifeExpectancy:"#7aa6c2", logOfGDperCapita:"#984ea3",socialSupport:"#dd5182"}[c];
 }
 
 // Load external data and boot
@@ -258,7 +262,7 @@ function ready(error, topo) {
 
 // function to handle pieChart.
 function pieChart(pD){
-        var pC ={},    pieDim ={w:250, h: 250};
+        var pC ={},    pieDim ={w:300, h: 300};
         pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
 
         // create svg for pie chart.
@@ -281,7 +285,8 @@ function pieChart(pD){
         .attr("id","countryText")
 	    .attr("text-anchor", "middle")
 		 .attr('font-size', '1em')
-		 .attr('y', 2)
+		 .attr('y', 0)
+         .attr('x', 2)
          .text("Country Name: "+ pD[pD.length - 1].countryName);
 
        g.append("text")
@@ -351,7 +356,7 @@ function legend(lD){
         var tr = legend.append("tbody").selectAll("tr").data(lD).enter().append("tr");
 
         // create the first column for each segment.
-        tr.append("td").append("svg").attr("width", '16').attr("height", '16').append("rect")
+        tr.append("td").append("svg").attr("width", '25').attr("height", '16').append("rect")
             .attr("width", '16').attr("height", '16')
 			.attr("fill",function(d){ return segColor(d.type); });
 
