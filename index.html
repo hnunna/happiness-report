@@ -2,7 +2,7 @@
 <html>
 <meta charset="utf-8">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<body>
+<body onload="loadData('2019')">
 <style>
   .countries {
     /* fill: none; */
@@ -21,10 +21,9 @@
   }
   .countries :hover {
     fill-opacity: .99;
-  /* fill: blue; */
 }
 .countries :active {
-  fill: red;
+  fill: blue;
 }
 #myBtn {
   display: none;
@@ -49,6 +48,13 @@
     text-align:right;
     width:50px;
 }
+.margins{
+    margin-left: 70px;
+    margin-right: 70px;
+}
+.title{
+    padding : 50px;
+}
 </style>
 <button onclick="topFunction()" id="myBtn" title="Go to top">Back to Top</button>
 <!-- Navbar -->
@@ -65,22 +71,41 @@
           <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
               <li><a href="#info">About</a></li>
-              <li><a href="#chart">2019</a></li>
+              <li><a href="#chart">Chart</a></li>
             </ul>
           </div>
         </div>
       </nav>
-<div id="info" class="container-fluid bg-1 text-center">
-        <h1 class="margin">World Happiness 2019</h1>
-                    <p>The World Happiness Report is a landmark survey of the state of global happiness that ranks 156 countries by how happy their citizens perceive themselves to be. This year’s World Happiness Report focuses on happiness and the community: how happiness has evolved over the past dozen years, with a focus on the technologies, social norms, conflicts and government policies that have driven those changes.</p>
-                    <p>The variables are GDP per capita, social support, healthy life expectancy, freedom, generosity, and absence of corruption. Note that we do not construct our happiness measure in each country using these six factors – the scores are instead based on individuals’ own assessments of their lives. Rather, we use the six variables to explain the variation of happiness across countries.</p>
-                    <p> As per 2019 Happiness Report, Finland is the happiest country in the world, with Denmark, Norway, Iceland, and the Netherlands holding the next top positions.</p>
- </div>
-    <div id="chart" class="container-fluid bg-2">
-        <div class="col-md-9" id="my_chart">
-            <svg width="800" height="600"></svg>
+    <div id="info" class="container-fluid bg-1 margins">
+        <h1 class="margin text-center title">World Happiness Report</h1>
+                    <p>The World Happiness Report is an annual publication of the United Nations Sustainable Development Solutions Network. It contains articles, and rankings of national happiness based on respondent ratings of their own lives, which the report also correlates with various life factors.</p>
+                    <p>Data is collected from people in over 150 countries. Each variable measured reveals a populated-weighted average score on a scale running from 0 to 10 that is tracked over time and compared against other countries. These variables currently include: <span><b>real GDP per capita, social support, healthy life expectancy, freedom to make life choices, generosity, and perceptions of corruption</b></span>. Each country is also compared against a hypothetical nation called Dystopia. Dystopia represents the lowest national averages for each key variable and is, along with residual error, used as a regression benchmark.</p> 
+                    <p>Note that these variables do not construct the happiness measure in each country – the scores are instead based on individuals’ own assessments of their lives. These six variables are used to explain the variation of happiness across countries.</p>
+                    <p>As of March 2019, Finland was ranked the happiest country in the world twice in row.</p>
+                </div>
+    <hr/>
+    <div id="chart" class="container-fluid bg-2 margins">
+        <div class="row">   
+            <div class="col-md-3">
+                <form>
+                <b>Select year:</b>
+                <select id="mySelect" onchange="yearChanged()">
+                  <option value="2019" selected>2019</option>
+                  <option value="2018">2018</option>
+                </select>
+            </form>
+            </div>
+            <div class="col-md-9"><h3 id="year"></h3>
+                <p>Map showing ranking of countries by their happiness score according to the World Happiness Report</p>
+            </div>
+        </div>
+        <div class="row"> 
+        <div class="col-md-9" id="my_chart">              
+            <svg width="800" height="600" id="mapSvg"></svg>
         </div>
         <div class="col-md-3" id="my_pie">
+                <svg></svg>
+        </div>
         </div>
     </div>
 </div>
@@ -89,6 +114,11 @@
 <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.js"></script>
 <script>
+    function yearChanged() {
+        var x = document.getElementById("mySelect").value;
+        document.getElementById("year").innerHTML = "Year " + x;
+        loadData(x);
+    }
         // When the user scrolls down 20px from the top of the document, show the button
         window.onscroll = function() {scrollFunction()};
         
@@ -205,13 +235,31 @@ function segColor(c) {
 }
 
 // Load external data and boot
-d3.queue()
+function loadData(year) {
+    document.getElementById("year").innerHTML = "Year " + year;
+    // clearing the previous map and pie
+    d3.selectAll("#my_map").remove();
+    d3.selectAll("#map_Pie").remove();
+    d3.selectAll("#map_legend").remove();
+    
+    var fileName;
+    if(year == '2018'){
+        fileName = "happiness-data-2018.csv";
+    }
+    else {
+        fileName = "happiness-data-2019.csv";
+    }
+    inputData = []; 
+    data.clear();
+    d3.queue()
     .defer(d3.json, "world.geojson")
-    .defer(d3.csv, "happiness-data-v3.csv", function(d) {
+    .defer(d3.csv, fileName, function(d) {
         inputData.push(d);
         data.set(d.code, +d.ladder);
         })
     .await(ready);
+
+}
 
 function ready(error, topo) {
     if (error) throw error;
@@ -265,9 +313,10 @@ function pieChart(pD){
         var pC ={},    pieDim ={w:300, h: 300};
         pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
 
+        var pieSelection = d3.select(my_pie);
         // create svg for pie chart.
-        var piesvg = d3.select(my_pie).append("svg")
-            .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+        var piesvg = pieSelection.select("svg")
+            .attr("width", pieDim.w).attr("height", pieDim.h).append("g").attr("id", "map_Pie")
             .attr("transform", "translate("+pieDim.w/2+","+pieDim.h/2+")");
 
         // create function to draw the arcs of the pie slices.
@@ -350,7 +399,7 @@ function legend(lD){
         var leg = {};
 
         // create table for legend.
-        var legend = d3.select(my_pie).append("table").attr('class','legend');
+        var legend = d3.select(my_pie).append("table").attr('class','legend').attr("id", "map_legend");
 
         // create one row per segment.
         var tr = legend.append("tbody").selectAll("tr").data(lD).enter().append("tr");
@@ -380,8 +429,8 @@ function legend(lD){
     }
 </script>
 <!-- Footer -->
-<footer class="container-fluid bg-4 text-center">
-    <p>Referenced from : Helliwell, J., Layard, R., & Sachs, J. (2019). World Happiness Report 2019, New York: Sustainable Development Solutions Network. <a href="https://worldhappiness.report/ed/2019/">https://worldhappiness.report/ed/2019/</a></p> 
+<footer class="container-fluid bg-4 margins">
+    <p>Reference : Helliwell, J., Layard, R., & Sachs, J. (2019). World Happiness Report 2019, New York: Sustainable Development Solutions Network and Helliwell, J., Layard, R., & Sachs, J. (2018). World Happiness Report 2018, New York: Sustainable Development Solutions Network.</p> 
 </footer>
 </body>
 </html>
