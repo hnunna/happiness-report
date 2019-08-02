@@ -41,35 +41,18 @@ var legend1 = d3.legendColor()
 svg.select(".legendThreshold")
     .call(legend1);
 
-// tooltip
-var tooltip = d3.select("#my_chart")
-    .append("div")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("visibility", "hidden")
-    .style("background-color", "#D3D3D3")
-    .style("border", "solid thin #fff");
+var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function (d) {
+        var tooltipText;
+        if (d.ladder > 0) {
+            tooltipText = "<strong>Country: </strong>" + d.properties.name + "<br>" + "<strong>Rank: </strong>" + d.ladder;
+        } else tooltipText = "<strong>Country: </strong>" + d.properties.name;
+        return tooltipText;
+    });
 
-// mouseover on map
-function mouseover() {
-    tooltip.style("visibility", "visible");
-}
-
-// mousemove on map
-function mousemove(d) {
-    var tooltipText;
-    if (d.ladder > 0) {
-        tooltipText = "Country: " + d.properties.name + "<br />" + "Rank: " + d.ladder;
-    } else tooltipText = "Country: " + d.properties.name;
-    tooltip.html(tooltipText)
-        .style("top", (event.clientY - 10) + "px").style("left", (event.clientX + 10) + "px");
-}
-
-// mouseout on map
-function mouseout() {
-    tooltip.style("visibility", "hidden");
-}
-
+svg.call(tip);
 
 function chartClicked(d, i) {
     // filter for selected country based on ladder
@@ -158,9 +141,25 @@ function ready(error, topo) {
             return colorScale(d.ladder);
         })
         .attr("d", path)
-        .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseout", mouseout)
+        // tooltips
+        .style("stroke", "white")
+        .style('stroke-width', 0.8)
+        .on('mouseover', function (d) {
+            tip.show(d, this);
+
+            d3.select(this)
+                .style("opacity", 1)
+                .style("stroke", "white")
+                .style("stroke-width", 2);
+        })
+        .on('mouseout', function (d) {
+            tip.hide(d, this);
+
+            d3.select(this)
+                .style("opacity", 1)
+                .style("stroke", "white")
+                .style("stroke-width", 0.8);
+        })
         .on("click", chartClicked);
 
     var topCountryData = inputData.filter(function (s) {
