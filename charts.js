@@ -201,15 +201,12 @@ function pieChart(pD) {
     pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
 
     var pieSelection = d3.select(my_pie);
-    // create svg for pie chart.
     var piesvg = pieSelection.select("svg")
         .attr("width", pieDim.w).attr("height", pieDim.h).append("g").attr("id", "map_Pie")
         .attr("transform", "translate(" + pieDim.w / 2 + "," + pieDim.h / 2 + ")");
 
-    // create function to draw the arcs of the pie slices.
     var arc = d3.arc().outerRadius(pieDim.r - 10).innerRadius(pieDim.r - 50);
 
-    // create a function to compute the pie slice angles.
     var pie = d3.pie().sort(null).value(function (d) {
         return d.typeValue;
     });
@@ -288,25 +285,20 @@ function mapLegendsForPieChart(type) {
 function legend(lD) {
     var leg = {};
 
-    // create table for legend.
     var legend = d3.select(my_pie).append("table").attr('class', 'legend').attr("id", "map_legend");
 
-    // create one row per segment.
     var tr = legend.append("tbody").selectAll("tr").data(lD).enter().append("tr");
 
-    // create the first column for each segment.
     tr.append("td").append("svg").attr("width", '25').attr("height", '16').append("rect")
         .attr("width", '16').attr("height", '16')
         .attr("fill", function (d) {
             return segColor(d.type);
         });
 
-    // create the second column for each segment.
     tr.append("td").text(function (d) {
         return mapLegendsForPieChart(d.type);
     });
 
-    // create the third column for each segment.
     tr.append("td").attr("class", 'legendFreq')
         .text(function (d) {
             return d3.format(",")(d.typeValue);

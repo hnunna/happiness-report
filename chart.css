@@ -1,24 +1,30 @@
 .countries {
-    /* fill: none; */
-    fill-opacity: .7;
-    stroke: #fff;
-    stroke-linejoin: round;
-  }
-  .legendThreshold {
-      font-size: 12px;
-      font-family: sans-serif;
-  }
-  .caption {
-      fill: #000;
-      text-anchor: start;
-      font-weight: bold;
-  }
-  .countries :hover {
-    fill-opacity: .99;
+  /* fill: none; */
+  fill-opacity: .7;
+  stroke: #fff;
+  stroke-linejoin: round;
 }
+
+.legendThreshold {
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+.caption {
+  fill: #000;
+  text-anchor: start;
+  font-weight: bold;
+}
+
+.countries :hover {
+  fill-opacity: .99;
+  cursor: pointer;
+}
+
 .countries :active {
-  fill: blue;
+  fill: skyblue;
 }
+
 #myBtn {
   display: none;
   position: fixed;
@@ -38,14 +44,17 @@
 #myBtn:hover {
   background-color: #555;
 }
+
 .legendFreq {
-    text-align:right;
-    width:50px;
+  text-align: right;
+  width: 50px;
 }
-.margins{
-    margin-left: 70px;
-    margin-right: 70px;
+
+.margins {
+  margin-left: 70px;
+  margin-right: 70px;
 }
-.title{
-    padding : 50px;
+
+.title {
+  padding: 50px;
 }
