@@ -1,6 +1,10 @@
 # Visualization of World Happiness https://hnunna.github.io/happiness-report/
 The narrative visualization is a representation of the happiness index of the countries in the world. It is taken from the annual world happiness report which is a publication of the United Nations Sustainable Development Solutions Network.
 
+## Screenshots
+![image](https://user-images.githubusercontent.com/53014657/129232437-1c936592-fbb4-41ab-85fd-bd51bc6280e8.png)
+![Screenshot (41)](https://user-images.githubusercontent.com/53014657/129232671-0be0219c-c721-422f-9ccf-d7292bd6c3f3.png)
+
 ## Messaging
 This visualization shows the happiness ranking of countries in the world and how certain factors explain the happiness of the people. 
 
@@ -47,8 +51,3 @@ Selecting a value from the dropdown menu and clicking on the map are the trigger
 Selecting a value from the dropdown menu triggers the loadData() of the map which re-renders the charts based on the year values.
 
 Clicking on a country in the map calls the update() of Donut Chart which updates the values of chart based on the element that is clicked. Hovering on the map changes the cursor from pointer to clickable icon which indicates that the part of map is clickable.
-
-## Screenshots
-![image](https://user-images.githubusercontent.com/53014657/129232437-1c936592-fbb4-41ab-85fd-bd51bc6280e8.png)
-![Screenshot (41)](https://user-images.githubusercontent.com/53014657/129232671-0be0219c-c721-422f-9ccf-d7292bd6c3f3.png)
-
